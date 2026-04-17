@@ -1,0 +1,19 @@
+rules:
+  - id: PROFIT_MARGIN_PROTECTION
+    description: "Financial Limit: Final net profit margin must be >= 8%."
+    target_field: "net_margin"
+    condition: "net_margin >= 0.08"
+    assertion: "input.get('net_margin', 0) >= 0.08"
+    severity: "CRITICAL"
+  - id: CBAM_COMPLIANCE
+    description: "Environmental Limit: Total CO2 footprint per unit must be < 2.5kg."
+    target_field: "carbon_footprint"
+    condition: "carbon_footprint < 2.5"
+    assertion: "input.get('carbon_footprint', 99) < 2.5"
+    severity: "CRITICAL"
+  - id: LOGISTICS_TIME_CAP
+    description: "Operational Limit: Total lead time must be < 55 days."
+    target_field: "lead_time"
+    condition: "lead_time < 55"
+    assertion: "input.get('lead_time', 999) < 55"
+    severity: "CRITICAL"

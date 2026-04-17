@@ -1,0 +1,19 @@
+rules:
+  - id: CLOUD_COST_CAP
+    description: "Financial Constraint: Total monthly infrastructure cost must be <= $500."
+    target_field: "estimated_monthly_cost"
+    condition: "estimated_monthly_cost <= 500"
+    assertion: "input.get('estimated_monthly_cost', 0) <= 500"
+    severity: "CRITICAL"
+  - id: ZERO_PUBLIC_INGRESS
+    description: "Security Mandate: Databases must NOT have a public IP address (IsPublic=False)."
+    target_field: "db_config"
+    condition: "is_public == False"
+    assertion: "input.get('db_config', {}).get('IsPublic') == False"
+    severity: "FATAL"
+  - id: HIGH_AVAILABILITY_MANDATE
+    description: "Operational Requirement: Architecture must span across at least 2 Availability Zones (Multi-AZ)."
+    target_field: "az_distribution"
+    condition: "az_count >= 2"
+    assertion: "input.get('az_count', 0) >= 2"
+    severity: "CRITICAL"

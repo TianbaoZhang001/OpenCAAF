@@ -1,0 +1,28 @@
+# OpenCAAF Domain Constraints: L3 Autonomous Driving (PASS-path variant)
+# Identical rule structure as ad_degradation.yaml, but used with a relaxed
+# physical state (clear weather → perception_range_limit raised from 30 m
+# to 90 m) so the two constraints are jointly satisfiable.
+#
+# Feasibility window:
+#   Rear safety:     v_t5 >= 84 km/h   (decel ≤ 2.0 m/s² over 5 s from 120)
+#   Forward safety:  v_t5 <  95.6 km/h (stop distance < 90 m perception)
+#   ⇒ v_t5 ∈ [84, 95.6) km/h.   Reference operating point: v_t5 = 90 km/h.
+#
+# Used by benchmark_ad_pass_path.py to validate:
+#   (a) CAAF's PASS-path convergence (Eq. 2 monotonicity)
+#   (b) State Locking across the 2 constraints
+
+rules:
+  - id: REAR_COLLISION_PREVENTION_DECELERATION
+    description: "Rear Safety Constraint: To prevent rear-end collisions during the takeover window, the velocity drop must not exceed the deceleration limit."
+    target_field: "vehicle_speed_kmph_t5"
+    condition: "(vehicle_speed_kmph_t0 - vehicle_speed_kmph_t5) / (transition_window_seconds * m_per_sec_to_km_per_h_factor) <= max_deceleration_limit"
+    assertion: "(input.get('vehicle_speed_kmph_t0') - input.get('vehicle_speed_kmph_t5')) / (input.get('transition_window_seconds') * input.get('m_per_sec_to_km_per_h_factor')) <= input.get('max_deceleration_limit')"
+    severity: "CRITICAL"
+
+  - id: FORWARD_COLLISION_PREVENTION_PERCEPTION
+    description: "Forward Safety Constraint: The physical braking distance at the target speed must be strictly less than the perception range."
+    target_field: "vehicle_speed_kmph_t5"
+    condition: "((vehicle_speed_kmph_t5 / m_per_sec_to_km_per_h_factor) ** 2) / (2 * road_friction_mu * g) < perception_range_limit"
+    assertion: "((input.get('vehicle_speed_kmph_t5') / input.get('m_per_sec_to_km_per_h_factor')) ** 2) / (2 * input.get('road_friction_mu') * input.get('g')) < input.get('perception_range_limit')"
+    severity: "FATAL"

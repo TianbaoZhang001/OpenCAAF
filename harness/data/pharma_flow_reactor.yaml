@@ -1,0 +1,67 @@
+# OpenCAAF Domain Constraints: Pharmaceutical Continuous Flow Reactor
+# A pharmaceutical company must determine operating parameters for a continuous
+# flow microreactor synthesizing a drug intermediate. The process must satisfy
+# regulatory purity, safety, throughput, and equipment constraints simultaneously.
+#
+# Paradox: {C1, C2, C4} are irreconcilable.
+#   C1+C2 force residence_time >= 157.1 s (conversion vs impurity trade-off)
+#   C4 limits residence_time <= 120 s (continuous flow practical limit)
+#   No operating point satisfies all three.
+#
+# Physics: Arrhenius kinetics with competing side reaction.
+#   k(T) = A * exp(-Ea / (R * (T + 273.15)))
+#   Conversion X = 1 - exp(-k * tau)
+#   Impurity I = alpha * k^2 * tau
+#
+# Note: assertions use 2.718281828459045 ** x in place of math.exp(x)
+#       since the UAI eval sandbox has no builtins.
+
+rules:
+  - id: CONVERSION_MINIMUM
+    description: "ICH Q6A Regulatory Requirement: The reaction must achieve at least 95% conversion of starting material to ensure API potency meets pharmacopoeia standards."
+    target_field: "conversion_X"
+    condition: "1 - exp(-k(T) * tau) >= 0.95, where k(T) = A*exp(-Ea/(R*(T+273.15)))"
+    assertion: "(1 - 2.718281828459045 ** (-(input.get('A_factor') * 2.718281828459045 ** (-input.get('Ea') / (input.get('R_gas') * (input.get('temperature_C') + 273.15)))) * input.get('residence_time_s'))) >= 0.95"
+    severity: "CRITICAL"
+
+  - id: IMPURITY_LIMIT
+    description: "ICH Q3A Impurity Guideline: Total impurity from the competing side reaction must not exceed 2% to meet regulatory filing requirements."
+    target_field: "impurity_fraction"
+    condition: "alpha * k(T)^2 * tau <= 0.02"
+    assertion: "input.get('alpha') * (input.get('A_factor') * 2.718281828459045 ** (-input.get('Ea') / (input.get('R_gas') * (input.get('temperature_C') + 273.15)))) ** 2 * input.get('residence_time_s') <= 0.02"
+    severity: "CRITICAL"
+
+  - id: THERMAL_DECOMPOSITION_LIMIT
+    description: "Safety: Reactor temperature must not exceed the thermal decomposition threshold of the drug intermediate."
+    target_field: "temperature_C"
+    condition: "temperature_C <= 150"
+    assertion: "input.get('temperature_C') <= input.get('T_decomp_C')"
+    severity: "FATAL"
+
+  - id: RESIDENCE_TIME_LIMIT
+    description: "Process Engineering: Continuous flow microreactor residence time must not exceed the practical limit for stable laminar flow and consistent product quality."
+    target_field: "residence_time_s"
+    condition: "residence_time_s <= 120"
+    assertion: "input.get('residence_time_s') <= input.get('tau_max_s')"
+    severity: "CRITICAL"
+
+  - id: THROUGHPUT_MINIMUM
+    description: "Business Requirement: Daily production must meet the minimum output target for the pilot-to-manufacturing scale-up commitment."
+    target_field: "production_kg_day"
+    condition: "Q * C0 * X * MW / 1000 * 1440/60 >= R_min_kg_day"
+    assertion: "(input.get('V_reactor_mL') / (input.get('residence_time_s') / 60)) * input.get('feed_conc_mol_L') * (1 - 2.718281828459045 ** (-(input.get('A_factor') * 2.718281828459045 ** (-input.get('Ea') / (input.get('R_gas') * (input.get('temperature_C') + 273.15)))) * input.get('residence_time_s'))) * input.get('MW') / 1000 * 1440 / 60 >= input.get('R_min_kg_day')"
+    severity: "CRITICAL"
+
+  - id: THERMAL_RUNAWAY_PREVENTION
+    description: "Safety: Exothermic heat generation must not exceed the reactor wall cooling capacity to prevent thermal runaway."
+    target_field: "heat_balance_W"
+    condition: "Q_m3s * C0_mol_m3 * X * delta_H <= cooling_capacity_W"
+    assertion: "((input.get('V_reactor_mL') / (input.get('residence_time_s') / 60)) / (60 * 1000000)) * (input.get('feed_conc_mol_L') * 1000) * (1 - 2.718281828459045 ** (-(input.get('A_factor') * 2.718281828459045 ** (-input.get('Ea') / (input.get('R_gas') * (input.get('temperature_C') + 273.15)))) * input.get('residence_time_s'))) * input.get('delta_H') <= input.get('cooling_capacity_W')"
+    severity: "FATAL"
+
+  - id: PRESSURE_RATING
+    description: "Equipment: Pressure drop through the reactor tube must not exceed the vessel pressure rating (Hagen-Poiseuille flow)."
+    target_field: "pressure_drop_Pa"
+    condition: "128 * mu * Q * L / (pi * d^4) <= P_max_Pa"
+    assertion: "128 * input.get('mu_visc') * ((input.get('V_reactor_mL') / (input.get('residence_time_s') / 60)) / (60 * 1000000)) * input.get('L_m') / (3.14159265 * input.get('d_m') ** 4) <= input.get('P_max_Pa')"
+    severity: "CRITICAL"

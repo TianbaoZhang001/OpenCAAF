@@ -1,0 +1,18 @@
+# OpenCAAF Domain Constraints: Cloud Infrastructure SLA Paradox
+# A Kubernetes deployment must satisfy both high-availability and cost constraints.
+# With the given parameters, these constraints are irreconcilable.
+
+rules:
+  - id: HIGH_AVAILABILITY_REPLICA_MINIMUM
+    description: "Availability SLA: To achieve 99.99% uptime (four-nines), the deployment must maintain at least the minimum replica count to survive concurrent pod failures."
+    target_field: "replica_count"
+    condition: "replica_count >= min_replicas_for_sla"
+    assertion: "input.get('replica_count', 0) >= input.get('min_replicas_for_sla')"
+    severity: "FATAL"
+
+  - id: COST_BUDGET_CEILING
+    description: "Cost Constraint: Total monthly compute cost (replica_count * cost_per_replica_usd) must not exceed the allocated budget ceiling."
+    target_field: "replica_count"
+    condition: "replica_count * cost_per_replica_usd <= monthly_budget_usd"
+    assertion: "input.get('replica_count', 0) * input.get('cost_per_replica_usd') <= input.get('monthly_budget_usd')"
+    severity: "CRITICAL"
