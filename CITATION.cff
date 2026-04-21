@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+title: "OpenCAAF: Convergent AI Agent Framework"
+message: "If you use OpenCAAF in your work, please cite the accompanying paper as below."
+type: software
+authors:
+  - given-names: Tianbao
+    family-names: Zhang
+    email: tianbao.zhang@yahoo.com
+repository-code: "https://github.com/TianbaoZhang001/OpenCAAF"
+url: "https://github.com/TianbaoZhang001/OpenCAAF"
+license: Apache-2.0
+version: "1.0.0"
+date-released: "2026-04-18"
+preferred-citation:
+  type: article
+  title: "Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)"
+  authors:
+    - given-names: Tianbao
+      family-names: Zhang
+  year: 2026
+  month: 4
+  identifiers:
+    - type: other
+      value: "arXiv:2604.17025"
+      description: "arXiv identifier"
+    - type: doi
+      value: "10.48550/arXiv.2604.17025"
+      description: "DOI"
+  url: "https://arxiv.org/abs/2604.17025"

@@ -1,8 +1,17 @@
 # 🚀 OpenCAAF: Convergent AI Agent Framework
 
+[![arXiv](https://img.shields.io/badge/arXiv-2604.17025-b31b1b.svg)](https://arxiv.org/abs/2604.17025)
+[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+
 **Deterministic Control for Industrial-Grade AI Engineering.**
 
 OpenCAAF transitions AI agents from probabilistic "chat-based" generators to deterministic "control-theoretic" systems. It targets safety-critical domains (Autonomous Driving, Bio-Pharma) where **95% correct is 100% undeployable**, and is designed to extend to other constraint-governed domains (regulatory, financial, infrastructure SLAs) via the Harness Registry abstraction.
+
+This repository is the reference implementation accompanying the paper:
+
+> **Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)**
+> Tianbao Zhang. arXiv:2604.17025 [cs.AI], April 2026.
+> https://arxiv.org/abs/2604.17025
 
 ---
 
@@ -104,6 +113,32 @@ N_TRIALS=30 python -m OpenCAAF.demos.benchmark_full_experiment
 ```
 
 Total API cost to reproduce every experiment in the paper is under **\$2.20 USD** at OpenAI list pricing. See `demos/` for the full list of benchmark scripts and `harness/data/` for the corresponding Harness YAML files. Open-weight replication (Cohere Command-R7B, Gemma-3-12B-IT) is supported via `CAAF_BACKEND=openrouter` — see `.env.example`.
+
+---
+
+## 🗺️ Roadmap
+
+- **v1 (current, arXiv:2604.17025)** — Core architecture (RAD / HaaA / CFC) validated on GPT-4o + GPT-4o-mini across Autonomous Driving and Bio-Pharma scenarios.
+- **v2 (in progress)** — Multi-model validation on Claude Opus 4.7 and DeepSeek R1 to demonstrate that the "compliant hallucination" failure mode and CAAF's interception are model-agnostic. Native Anthropic adapter with faithful tool-use semantics.
+- **Community contributions welcome** for additional Harness Registries (finance, regulatory, infrastructure SLAs) — see `harness/data/` for the YAML schema.
+
+---
+
+## 📝 Citation
+
+If you use OpenCAAF in your work, please cite:
+
+```bibtex
+@misc{zhang2026caaf,
+  title         = {Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)},
+  author        = {Tianbao Zhang},
+  year          = {2026},
+  eprint        = {2604.17025},
+  archivePrefix = {arXiv},
+  primaryClass  = {cs.AI},
+  url           = {https://arxiv.org/abs/2604.17025}
+}
+```
 
 ---
 
