@@ -1,4 +1,19 @@
-openai>=1.0.0
-pydantic>=2.0.0
-pyyaml>=6.0
-python-dotenv>=1.0.0
+# CAAF supplementary — runtime dependencies
+#
+# Installation:
+#   pip install -r requirements.txt
+#
+# All model access is via provider APIs; no local GPU is required.
+
+# LLM providers
+openai>=1.40.0           # GPT-4o / GPT-4o-mini; also routes OpenRouter (Cohere, Gemma)
+anthropic>=0.40.0        # Claude Opus 4, Haiku 4.5 (monolithic + true tool-call UAI)
+
+# Core utilities
+pydantic>=2.5.0          # schema validation (AtomicTask, DecompositionTree, etc.)
+pyyaml>=6.0              # Harness Registry YAML parsing
+python-dotenv>=1.0.0     # .env key loading
+
+# Figure generation (only needed for demos/generate_paper_figures_v2.py)
+matplotlib>=3.8.0
+numpy>=1.26.0

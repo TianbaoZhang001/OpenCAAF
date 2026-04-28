@@ -25,7 +25,7 @@ Output:
   - summary.json + summary.md (Markdown table for paper)
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_pharma_pass_path
 """
 import os, sys, json, re, time, math, statistics, glob

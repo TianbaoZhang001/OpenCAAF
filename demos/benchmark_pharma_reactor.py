@@ -21,7 +21,7 @@ Paradox structure (3-way, non-linear):
   [4] Mono+UAI,      no_hint,   temp=0.7, n=20   (P0-1: UAI-only ablation)
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_pharma_reactor
 """
 import os, sys, json, re, time, math, statistics

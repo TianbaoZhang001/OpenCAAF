@@ -3,7 +3,7 @@ Section 5: Context Rot benchmark — n=20 per condition.
 Tests whether monolithic LLMs compromise safety constraints under cross-domain noise.
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_context_rot_v2
 """
 import os, sys, json, time, re, statistics

@@ -1,41 +1,30 @@
-# Secrets
+# Secrets — never commit
 .env
-.env.*
-!.env.example
+.env.local
+.env.*.local
+*.key
+*.pem
+secrets.yaml
+credentials.json
 
-# Python
-__pycache__/
-*.py[cod]
-*$py.class
-*.egg-info/
-*.egg
-build/
-dist/
-.eggs/
-.pytest_cache/
-.mypy_cache/
-.ruff_cache/
-
-# Virtual environments
-venv/
-.venv/
-env/
-ENV/
-
-# Run artifacts
+# Runtime data
 logs/
-*.log
 demos/logs/
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.ipynb_checkpoints/
 
-# OS
+# OS / editor
 .DS_Store
 Thumbs.db
-
-# IDE
-.vscode/
 .idea/
+.vscode/
 *.swp
 *.swo
 
-# Jupyter
-.ipynb_checkpoints/
+# Build artifacts
+*.egg-info/
+build/
+dist/

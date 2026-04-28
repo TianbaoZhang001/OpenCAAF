@@ -18,7 +18,7 @@ Key hypothesis:
   sounding compromises rather than proving irreconcilability.
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_debate_baseline
 """
 import os, sys, json, re, time, statistics

@@ -3,7 +3,7 @@ Section 6: Stochastic Oscillation vs. Monotonic Convergence benchmark — n=20 p
 Tests whether naive reflection loops can converge vs. CAAF's state-locking guarantee.
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_oscillation_v2
 """
 import os, sys, json, time, re, statistics

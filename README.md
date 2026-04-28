@@ -1,146 +1,126 @@
-# 🚀 OpenCAAF: Convergent AI Agent Framework
+# OpenCAAF: Convergent AI Agent Framework
 
-[![arXiv](https://img.shields.io/badge/arXiv-2604.17025-b31b1b.svg)](https://arxiv.org/abs/2604.17025)
-[![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
+Reference implementation for the paper **"Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)"**.
 
-**Deterministic Control for Industrial-Grade AI Engineering.**
-
-OpenCAAF transitions AI agents from probabilistic "chat-based" generators to deterministic "control-theoretic" systems. It targets safety-critical domains (Autonomous Driving, Bio-Pharma) where **95% correct is 100% undeployable**, and is designed to extend to other constraint-governed domains (regulatory, financial, infrastructure SLAs) via the Harness Registry abstraction.
-
-This repository is the reference implementation accompanying the paper:
-
-> **Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)**
-> Tianbao Zhang. arXiv:2604.17025 [cs.AI], April 2026.
-> https://arxiv.org/abs/2604.17025
+CAAF transitions LLM agents from probabilistic generators to deterministic, control-theoretic systems for safety-critical engineering domains (autonomous driving, pharmaceutical reactor design, regulated industrial workflows) where 95% correct is undeployable.
 
 ---
 
-## 🏗️ The Three Pillars of Determinism
+## The Three Pillars
 
-OpenCAAF is built on three foundational engineering principles:
+1. **Recursive Atomic Decomposition (RAD)** — partitions high-entropy requests into a topological DAG. Each node executes in an isolated sub-agent context, preventing Context Rot.
+2. **Harness as an Asset (HaaA)** — formalizes domain invariants as YAML rules + Python assertions. The deterministic Unified Assertion Interface (UAI) gives the same compliance floor regardless of which LLM is plugged in.
+3. **Structured Semantic Gradients with State Locking** — the Reviewer emits structured directional corrections; satisfied dimensions are frozen across iterations, forcing monotonic non-regression and preventing the stochastic-oscillation trap that traps naive reflection loops.
 
-### 1. Recursive Atomic Decomposition (RAD)
-Stop fighting with context saturation. OpenCAAF partitions high-entropy requests into a **Topological Directed Acyclic Graph (DAG)**. Each node is executed by an isolated **Sub-Agent** in a dedicated context window, preventing "Context Rot" and ensuring absolute focus on local invariants.
-
-### 2. Harness as an Asset (HaaA)
-Decouple corporate safety intelligence from transient LLM models. Engineering constraints are formalized into **Harness Assets** (YAML + Python Assertions). Whether you use GPT-4o or a local Llama-3, your compliance floor is mathematically locked by the **Unified Assertion Interface (UAI)**.
-
-### 3. Convergent Feedback Control (CFC)
-No more "Stochastic Oscillation." Our Reviewer functions as a **Semantic Sensor**, computing **Structured Semantic Gradients** to force monotonic convergence. Via **State Locking**, successful dimensions are frozen, ensuring the system "hunts" for compliance without regressing previously secured states.
+See `ARCHITECTURE.md` for the design and `paper.pdf` for full empirical evidence.
 
 ---
 
-## 📊 Empirical Proof: The TCO Arbitrage
-We benchmarked raw monolithic models against OpenCAAF in high-entropy physical paradoxes:
+## Headline empirical results
 
-| Metric | Monolithic (GPT-4o) | **OpenCAAF (Hybrid 4o/4o-mini)** |
-| :--- | :--- | :--- |
-| **Paradox Interception** | 0% (Hallucination) | **100% (Fail-Safe Halt)** |
-| **Complexity Scaling** | Exponential Cost | **Linear Cost** |
-| **Total Cost (10 Rules)** | **$204.06** (Manual Debugging) | **$5.21** (Auto-Convergence) |
-| **Economic Arbitrage** | Baseline | **39.2x Savings** |
+Both benchmarks evaluate the architecturally hardest case: **physically irreconcilable** constraint sets where the correct action is to detect and halt rather than emit a plausible-but-violating answer.
 
----
+| Benchmark | Monolithic GPT-4o | CAAF-all-mini |
+|---|---|---|
+| L3 AD Degradation Paradox (Table 1, n=30) | **0%** paradox detection | **100%** |
+| Pharma Flow Reactor Paradox (Table 3, n=20) | **0%** | **100%** |
 
-## 🧠 Core Architectural Q&A
+**Cost (Finding 10).** Three configurations all reach 100% on the pharma 7-constraint paradox: CAAF-all-mini at **$0.0044/trial**, CAAF-all-Haiku-4.5 at $0.20/trial, and Mono+UAI true-tool-call on Opus 4 thinking at $0.499/trial. CAAF on commodity models is **~114× cheaper** than the frontier-reasoning + true-tool-call path at identical reliability, and **415× cheaper** with the Cohere Command-R7B executor.
 
-### Q1: RAD vs. DAG vs. Node vs. Sub-agent?
-- **RAD (Recursive Atomic Decomposition)** is the **Action**. It's the process of breaking a complex prompt into solvable pieces.
-- **DAG (Directed Acyclic Graph)** is the **Artifact**. It's the structural map of how these pieces depend on each other.
-- **Node** is the **Task**. A single vertex in the graph representing a discrete requirement (e.g., "Calculate Braking Jerk").
-- **Sub-agent (Executor)** is the **Worker**. A context-limited LLM instance (e.g., `gpt-4o-mini`) assigned to execute a specific Node.
+**Open-weight replication (Finding 5).** Both Cohere Command-R7B (7B, structured-output fine-tuned) and Google Gemma-3-12B-IT (12B) achieve 100% on AD PASS-path and pharma 3-way paradox (80/80 trials, $0.061 total) — establishing that CAAF reliability is architectural, not model-scale-dependent, and a fully on-prem deployment is feasible for regulated industries.
 
-### Q2: How do Nodes scale with Request complexity?
-The number of Nodes is driven by the **Semantic Complexity** of your request, not just the number of Harness rules. If you have 10 complex requirements but only 3 safety rules, OpenCAAF will generate ~10 Nodes to ensure high-fidelity execution. The Harness rules act as **topological anchors**—mandatory tripwires that the Orchestrator weaves into the graph to ensure critical values are verified.
-
-### Q3: What is the Verification Lifecycle?
-Verification follows a strict **Isolate -> Aggregate -> Assert -> Integrate** sequence:
-1. **Isolate:** Sub-agents produce local JSON fragments in silos.
-2. **Aggregate:** The Orchestrator merges all fragments into a unified **Global State**.
-3. **Assert:** The Reviewer runs the complete Harness against the Global State to catch cross-domain conflicts.
-4. **Integrate:** Only if all assertions pass is the final engineering report synthesized and released.
-
-### Q4: How does the system find the right Harness at scale?
-In an enterprise with thousands of rules, OpenCAAF utilizes **Semantic Routing (RAG)**. Before decomposition, the Orchestrator embeds the user request and queries a Harness Registry to retrieve the top-$K$ relevant YAML files (e.g., matching "L3", "Rain", "Braking"). These specific "physical laws" are then dynamically injected into the active session.
+**Total reproduction cost.** Every benchmark reported in the paper runs for **under $2.20 USD** in total API spend.
 
 ---
 
-## 🛠️ Quick Start
+## Quick start
 
-### 1. Define your Harness (Digital Moat)
-```yaml
-# harness/data/safety.yaml
-rules:
-  - id: MAX_LATENCY
-    description: "System response must be < 100ms"
-    assertion: "input.latency < 100"
-    severity: CRITICAL
+```bash
+cp .env.example .env          # fill in OPENAI_API_KEY, ANTHROPIC_API_KEY, OPENROUTER_API_KEY
+pip install -r requirements.txt
 ```
 
-### 2. Execute with OpenCAAF
+Run the headline AD experiment (Table 1, 7 conditions, n=30):
+
+```bash
+python -m OpenCAAF.demos.benchmark_full_experiment
+```
+
+Each run writes `OpenCAAF/demos/logs/<experiment>_<timestamp>/` containing `results.json` (aggregate metrics), `*_runs.jsonl` (per-trial records), and, for CAAF runs, a `*_traces/run_NN/` subtree of per-iteration strategy plans, expert outputs, UAI feedback, and final artifacts.
+
+Sample size is overridable via `N_TRIALS` (default 20; 30 for `benchmark_full_experiment.py`):
+
+```bash
+N_TRIALS=5 python -m OpenCAAF.demos.benchmark_pharma_reactor    # quick smoke
+```
+
+---
+
+## Reproducing the paper
+
+| Paper artifact | Script |
+|---|---|
+| Table 1 (AD 7-condition, n=30, Findings 1–5) | `demos/benchmark_full_experiment.py` |
+| Table 2 (open-weight replication) | `demos/benchmark_ad_pass_path.py` and `demos/benchmark_pharma_reactor.py` with `CAAF_BACKEND=openrouter` and `CAAF_EXECUTOR_MODEL=cohere/command-r7b-12-2024` (or `google/gemma-3-12b-it`) |
+| Table 3 cells 1–4 (Pharma GPT-4o-mini, F6, F7, F8-i) | `demos/benchmark_pharma_reactor.py` |
+| Table 3 cells 6–7 (Mono+UAI true tool-call, F8 core) | `demos/reasoning_uai_react.py pharma --n 20` |
+| Table 3 cell 5 (Mono Opus 4 thinking, no UAI, F9) | `demos/smoke_v2.py B` |
+| Table 3 cell 8 (CAAF-all-Haiku-4.5) | `demos/smoke_v2.py C` |
+| Table 4 (AD PASS-path convergence) | `demos/benchmark_ad_pass_path.py` |
+| Table on baselines (debate + sequential, F11) | `demos/benchmark_debate_baseline.py` + `demos/benchmark_sequential_baseline.py` |
+| Context Rot benchmark | `demos/benchmark_context_rot_v2.py` |
+| Fig 2 (oscillation) | `demos/benchmark_oscillation_v2.py` |
+| Cost / cross-table rollup | `demos/aggregate_v2_results.py` |
+| Regenerate paper figures | `demos/generate_paper_figures_v2.py` |
+
+A reviewer-friendly workflow with timing and expected cost is documented in `demos/README.md`.
+
+---
+
+## Repository layout
+
+- `engine/` — Orchestrator, RAD, Semantic Reviewer, Context Resolver
+- `harness/` — Harness Registry (YAML + Python assertion engine)
+  - `harness/data/ad_degradation.yaml` — L3 AD paradox variant
+  - `harness/data/ad_degradation_pass.yaml` — L3 AD PASS-path variant
+  - `harness/data/pharma_flow_reactor.yaml` — Pharma paradox variant
+  - `harness/data/pharma_flow_reactor_pass.yaml` — Pharma PASS-path variant
+- `adapters/` — LLM provider adapters (OpenAI / Anthropic / OpenRouter)
+- `schemas/` — JSON schemas (AtomicTask, DecompositionTree, gradient triple, state locking)
+- `demos/` — One benchmark script per paper experiment cell
+- `utils/` — Logging, cost accounting, parse-retry policy
+
+---
+
+## Model access
+
+| Condition | Provider | Env var |
+|---|---|---|
+| GPT-4o / GPT-4o-mini monolithic + CAAF reference | OpenAI | `OPENAI_API_KEY` |
+| Claude Opus 4 thinking / Haiku 4.5 monolithic + tool-call | Anthropic | `ANTHROPIC_API_KEY` |
+| Cohere Command-R7B / Google Gemma-3-12B-IT open-weight | OpenRouter | `OPENROUTER_API_KEY` |
+
+---
+
+## Minimal usage example
+
 ```python
 from OpenCAAF.engine.orchestrator import OpenCAAFOrchestrator
 from OpenCAAF.adapters.openai_adapter import OpenAIAdapter
 
 executor = OpenAIAdapter(model="gpt-4o-mini")
-reviewer = OpenAIAdapter(model="gpt-4o")
+reviewer = OpenAIAdapter(model="gpt-4o-mini")
 
 orchestrator = OpenCAAFOrchestrator(executor, reviewer)
 
-# The Orchestrator handles RAD, DAG execution, and UAI verification
 tree = orchestrator.run_full_pipeline(
-    request="Design a high-speed L3 autonomous driving fallback.",
-    domain_id="ad_degradation"
+    request="Design an L3 autonomous driving fallback for highway cruise at 120 km/h with 30m perception range.",
+    domain_id="ad_degradation",   # loads harness/data/ad_degradation.yaml
 )
 ```
 
 ---
 
-## 🔁 Reproducing the Paper
+## License
 
-```bash
-# 1. Install
-pip install -r requirements.txt
-
-# 2. Configure your API key
-cp .env.example .env
-# edit .env, set OPENAI_API_KEY=sk-...
-
-# 3. Run any of the paper benchmarks (each writes a timestamped log dir under demos/logs/)
-N_TRIALS=20 python -m OpenCAAF.demos.benchmark_ad_pass_path
-N_TRIALS=20 python -m OpenCAAF.demos.benchmark_pharma_reactor
-N_TRIALS=30 python -m OpenCAAF.demos.benchmark_full_experiment
-```
-
-Total API cost to reproduce every experiment in the paper is under **\$2.20 USD** at OpenAI list pricing. See `demos/` for the full list of benchmark scripts and `harness/data/` for the corresponding Harness YAML files. Open-weight replication (Cohere Command-R7B, Gemma-3-12B-IT) is supported via `CAAF_BACKEND=openrouter` — see `.env.example`.
-
----
-
-## 🗺️ Roadmap
-
-- **v1 (current, arXiv:2604.17025)** — Core architecture (RAD / HaaA / CFC) validated on GPT-4o + GPT-4o-mini across Autonomous Driving and Bio-Pharma scenarios.
-- **v2 (in progress)** — Multi-model validation on Claude Opus 4.7 and DeepSeek R1 to demonstrate that the "compliant hallucination" failure mode and CAAF's interception are model-agnostic. Native Anthropic adapter with faithful tool-use semantics.
-- **Community contributions welcome** for additional Harness Registries (finance, regulatory, infrastructure SLAs) — see `harness/data/` for the YAML schema.
-
----
-
-## 📝 Citation
-
-If you use OpenCAAF in your work, please cite:
-
-```bibtex
-@misc{zhang2026caaf,
-  title         = {Harness as an Asset: Enforcing Determinism via the Convergent AI Agent Framework (CAAF)},
-  author        = {Tianbao Zhang},
-  year          = {2026},
-  eprint        = {2604.17025},
-  archivePrefix = {arXiv},
-  primaryClass  = {cs.AI},
-  url           = {https://arxiv.org/abs/2604.17025}
-}
-```
-
----
-
-## 📜 License
-Apache-2.0. See `LICENSE`.
+Apache-2.0.

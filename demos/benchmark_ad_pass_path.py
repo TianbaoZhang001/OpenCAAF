@@ -24,7 +24,7 @@ Output:
   - summary.json / paper_table.md for paper integration
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_ad_pass_path
 """
 import os, sys, json, re, time, math, statistics, glob

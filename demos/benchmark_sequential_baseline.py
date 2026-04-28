@@ -17,7 +17,7 @@ Key hypothesis:
   may identify surface-level issues but cannot prove irreconcilability.
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_sequential_baseline
 """
 import os, sys, json, re, time, statistics

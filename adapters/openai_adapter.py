@@ -12,6 +12,8 @@ def backend_kwargs() -> Dict[str, Any]:
       - unset / ``openai``    → default OpenAI endpoint
       - ``together``          → Together.ai (TOGETHER_API_KEY)
       - ``openrouter``        → OpenRouter (OPENROUTER_API_KEY)
+      - ``deepseek``          → DeepSeek (DEEPSEEK_API_KEY); OpenAI-compatible
+                                 API, so no native adapter needed
     """
     backend = (os.getenv("CAAF_BACKEND") or "openai").lower()
     if backend == "together":
@@ -25,6 +27,12 @@ def backend_kwargs() -> Dict[str, Any]:
             "base_url": os.getenv("OPENROUTER_BASE_URL",
                                   "https://openrouter.ai/api/v1"),
             "api_key_env": "OPENROUTER_API_KEY",
+        }
+    if backend == "deepseek":
+        return {
+            "base_url": os.getenv("DEEPSEEK_BASE_URL",
+                                  "https://api.deepseek.com/v1"),
+            "api_key_env": "DEEPSEEK_API_KEY",
         }
     return {}
 
@@ -46,6 +54,9 @@ class OpenAIAdapter(LLMAdapter):
             # --- OpenAI ---
             "gpt-4o":      {"prompt": 5.0,  "completion": 15.0},
             "gpt-4o-mini": {"prompt": 0.15, "completion": 0.6},
+            # --- DeepSeek (OpenAI-compat endpoint, non-cache-hit prices) ---
+            "deepseek-reasoner": {"prompt": 0.55, "completion": 2.19},
+            "deepseek-chat":     {"prompt": 0.27, "completion": 1.10},
             # --- Together.ai open-weight (for replication) ---
             # Paid Turbo endpoints
             "Qwen/Qwen2.5-7B-Instruct-Turbo":              {"prompt": 0.30, "completion": 0.30},
@@ -65,6 +76,7 @@ class OpenAIAdapter(LLMAdapter):
             "qwen/qwen-2.5-7b-instruct":                   {"prompt": 0.04, "completion": 0.10},
             "qwen/qwen-2.5-14b-instruct":                  {"prompt": 0.08, "completion": 0.20},
             "qwen/qwen3-8b":                               {"prompt": 0.05, "completion": 0.40},
+            "qwen/qwen3-14b":                              {"prompt": 0.06, "completion": 0.24},
             "meta-llama/llama-3.1-8b-instruct":            {"prompt": 0.02, "completion": 0.05},
             "meta-llama/llama-3.2-3b-instruct":            {"prompt": 0.051, "completion": 0.34},
             "meta-llama/llama-3.3-70b-instruct":           {"prompt": 0.10, "completion": 0.32},

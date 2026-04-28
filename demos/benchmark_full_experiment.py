@@ -17,7 +17,7 @@ Key claims tested:
   - Weaker model + CAAF > stronger model without CAAF (conditions 1 vs 5)
 
 Usage:
-    cd "/path/to/Agent_Playground"
+    cd /path/to/parent-of-OpenCAAF
     python -m OpenCAAF.demos.benchmark_full_experiment
 """
 import os, sys, json, re, time, math, statistics
